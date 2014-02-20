@@ -80,8 +80,8 @@ class battleships {
 	}
 }
 
-// Include some PHP Files.
-include('core/hscore.inc.php');
-include('core/tmpl.inc.php');
-include('core/gd.inc.php');
+// Load Extra
+include(config::get('root').'core/hscore.inc.php');
+include(config::get('root').'core/tmpl.inc.php');
+include(config::get('root').'core/gd.inc.php');
 ?>

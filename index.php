@@ -4,6 +4,8 @@
 // Main File
 
 // Load it
+include('core/config.inc.php');
+config::load("data/config.php");
 include('core/battleships.php');
 
 // Construct a monster mamajam.

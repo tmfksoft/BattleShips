@@ -73,7 +73,7 @@ class battle_gd {
 		// Now we draw the Ships on the Grid.
 		if ($draw_ships) {
 			foreach ($ships as $sid => $sh) {
-				$res = imagecreatefrompng("assets/img/ship_{$sh['len']}.png"); // Load the Ship Image
+				$res = imagecreatefrompng(config::get("root")."assets/img/ship_{$sh['len']}.png"); // Load the Ship Image
 				// Ensure it realises we want maintain alpha transparency.
 				imagealphablending($res, true);
 				imagesavealpha($res, true);
@@ -157,10 +157,10 @@ class battle_gd {
 			
 			if ($type) {
 				$shot++;
-				$res = imagecreatefrompng("assets/img/hit.png"); // Load the Hit Image
+				$res = imagecreatefrompng(config::get("root")."assets/img/hit.png"); // Load the Hit Image
 				if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 30, $ht['y'] * $height + $height, "D", $red);
 			} else {
-				$res = imagecreatefrompng("assets/img/miss.png"); // Load the Miss Image
+				$res = imagecreatefrompng(config::get("root")."assets/img/miss.png"); // Load the Miss Image
 				if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 40, $ht['y'] * $height + $height, "E", $red);
 			}
 			
