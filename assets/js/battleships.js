@@ -32,10 +32,14 @@ $("#player_ships").click(function(e){
    var relX = e.pageX - parentOffset.left;
    var relY = e.pageY - parentOffset.top;
    
+   if (typeof(direction) == 'undefined') {
+		direction = 0;
+   }
+   
    var relX = Math.floor(relX / 32)-1;
    var relY = Math.floor(relY / 32)-1;
-   console.log("Placing Ship at "+relX+"x"+relY);
-   $.get("game/place_ship.php?x="+relX+"&y="+relY,function(data){
+   console.log("Trying to Placing Ship at "+relX+"x"+relY);
+   $.get("game/place_ship.php?x="+relX+"&y="+relY+"&direction="+~~direction,function(data){
 		update_grids();
 		update_queue();
    });
@@ -49,7 +53,7 @@ $("#computer_hits").click(function(e){
    
    var relX = Math.floor(relX / 32)-1;
    var relY = Math.floor(relY / 32)-1;
-   console.log("Placing Hit");
+   console.log("Trying to Placing Hit at "+relX+"x"+relY);
    $.get("game/place_hit.php?x="+relX+"&y="+relY,function(data){
 		update_grids();
    });

@@ -15,7 +15,5 @@ $tmpl = new template();
 $bgd = new battle_gd();
 
 // Get our ships.
-$hits = $game->get("computer_hits");
-$hits[] = array("x"=>$_GET['x'],"y"=>$_GET['y']);
-$game->set("computer_hits",$hits);
+$game->player_place_hit($_GET['x'],$_GET['y']);
 ?>

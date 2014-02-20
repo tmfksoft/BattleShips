@@ -40,9 +40,8 @@
 	<hr></hr>
 	<table class="table" id="playing_grids">
 		<tr>
-			<td>
-				<h4>Ship Queue</h4>
-				<small>Ships you can place</small>
+			<td width="160px">
+				<h3>Info</h3>
 			</td>
 			<td>
 				<h4>Your Ships</h4>
@@ -54,18 +53,30 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td width="160px">
+				<span id="instructions">
+					<?php echo config::$conf['text']['place_p']; ?>
+				</span>
+				<hr></hr>
+				<h4>Ship Queue</h4>
+				<input type="button" class="btn btn-primary btn-large" onclick="if (typeof(direction) !== 'undefined') { direction = !direction; } else { direction = 1; } this.value = (direction == true ? 'Rotate Horizontal' : 'Rotate Vertical')" value="Rotate Vertical"/>
+				<hr></hr>
 				<div id="player_queue">
-					<?php foreach ($this->get("player_queue") as $ship) {
-						echo '<img class="ship" title="'.$ship['name'].'" src="assets/img/ship_'.$ship['len'].'.png"/>';
-					} ?>
+					<?php
+					foreach ($this->get("player_queue") as $ship) {
+						echo '<img class="ship" title="'.$ship['name'].' - '.$ship['len'].' Cells" src="assets/img/ship_'.$ship['len'].'.png"/>';
+					}
+					if (count($this->get("player_queue")) <= 0) {
+						echo "<center><i>Nothing here!</i></center>";
+					}
+					?>
 				</div>
 			</td>
 			<td>
 				<img id="player_ships" src="data:image/png;base64,<?php echo base64_encode($this->get("player_ships")); ?>"/>
 			</td>
 			<td>
-				<img id="computer_hits" onclick="place_hit();" src="data:image/png;base64,<?php echo base64_encode($this->get("computer_hits")); ?>"/>
+				<img id="computer_hits" src="data:image/png;base64,<?php echo base64_encode($this->get("computer_hits")); ?>"/>
 			</td>
 		</tr>
 	</table>

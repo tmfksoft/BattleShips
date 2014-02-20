@@ -1,10 +1,16 @@
+		<footer>
+			<hr></hr>
+			<div class="pull-right">
+				<p>
+					<small>
+						<strong>
+							Copyright <a href="http://thomas-edwards.me" >Thomas Edwards</a> &copy; <?php echo date('Y'); ?>
+						</strong>
+					</small>
+				</p>
+			</div>
+		</footer>
     </div><!-- /.container -->
-	<footer>
-		<hr></hr>
-		<div class="pull-right" style="margin-right:30px;">
-			Copyright Thomas Edwards <?php echo date('Y'); ?>
-		</div>
-	</footer>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

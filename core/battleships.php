@@ -85,17 +85,60 @@ class battleships {
 		// AI To place a hit against the player.
 	}
 	// Player Related.
-	function player_place_ship($x,$y) {
+	function player_place_ship($x,$y,$dir = 0) {
 		$ships = config::get("ships");
 		
 		$player_ships = $this->get("player_ships");
 		if (count($player_ships) < count($ships)) {
+			$place = false;
 			$tmp = $ships[count($player_ships)];
 			$tmp['x'] = $x;
 			$tmp['y'] = $y;
-			$tmp['dir'] = 1;
+			$tmp['dir'] = $dir;
+			// Check if it fits within the Grid.
+			if ($x < config::get("cols") && $y < config::get("rows")) {
+				if ($dir == 1) {
+					if ( ($y+$tmp['len']) <= config::get("rows")) {
+						$place = true;
+					}
+				} else {
+					if ( ($x+$tmp['len']) <= config::get("cols")) {
+						$place = true;
+					}
+				}
+			}
+			// Check if theres not already a ship here!
+			foreach ($player_ships as $sh) {
+				if ($sh['x'] == $x && $sh['y'] == $y) {
+					$place = false;
+				}
+				if ($sh['dir']) {
+					// Existing ship is Vertical
+					if ($x >= $sh['x'] && $x <= $sh['x'] + $sh['len']-1) {
+						if ($y == $sh['y']) {
+							$place = false;
+						}
+					}
+				} else {
+					// Existing ship is Horizontal
+					if ($y >= $sh['y'] && $x <= $sh['y'] + $sh['len']-1) {
+						if ($x == $sh['x']) {
+							$place = false;
+						}
+					}
+				}
+			}
+			
 			$player_ships[] = $tmp;
-			$this->set("player_ships",$player_ships);
+			if ($place) $this->set("player_ships",$player_ships);
+		}
+	}
+	function player_place_hit($x,$y) {
+		if (count($this->get("player_ships")) === count(config::get("ships"))) {
+			// Check we've actually placed our ships.
+			$hits = $this->get("computer_hits");
+			$hits[] = array("x"=>$x,"y"=>$y);
+			$this->set("computer_hits",$hits);
 		}
 	}
 	function player_queue() {

@@ -16,9 +16,9 @@ $bgd = new battle_gd();
 
 // Set to clean.
 foreach ($game->player_queue("player_queue") as $ship) {
-	echo '<img class="ship" title="'.$ship['name'].'" src="assets/img/ship_'.$ship['len'].'.png"/>';
+	echo '<img class="ship" title="'.$ship['name'].' - '.$ship['len'].' Cells" src="assets/img/ship_'.$ship['len'].'.png"/>';
 }
 if (count($game->player_queue("player_queue")) <= 0) {
-	echo "<center><i>You've placed all your ships!</i></center>";
+	echo "<center><i>Nothing here!</i></center>";
 }
 ?>
