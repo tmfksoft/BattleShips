@@ -21,6 +21,7 @@ if ($game->action() == "clean") {
 }
 
 // Now we dance around the rose bush with the templating system.
+$tmpl->set("page","home");
 $tmpl->load("home.php");
 $tmpl->display(false,true);
 ?>

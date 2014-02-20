@@ -7,6 +7,7 @@ class template {
 	public function __construct($dir = "data/tmpl/") {
 		$this->files = array();
 		$this->dir = $dir;
+		$this->variables = array();
 	}
 	public function load($fname) {
 		$file = $this->dir.$fname;
@@ -88,6 +89,47 @@ class template {
 			return $html;
 		} else {
 			echo $html;
+		}
+	}
+	public function set($var,$val) {
+		$this->variables[strtolower($var)] = $val;
+	}
+	public function get($var) {
+		if (isset($this->variables[strtolower($var)])) {
+			$arr = $this->variables[strtolower($var)];
+			return $arr;
+		} else {
+			return null;
+		}
+	}
+	public function dateify($stamp = null) {
+		$current = time();
+		$differ = $current-$stamp;
+		if ($differ < 86400 && $differ > 30) {
+			// Below 24hrs.
+			$mins = round($differ/60);
+			if ($mins > 60) { $hours = round($mins/60); } else { $hours = "0"; }
+			if ($hours > 1) { $word_h = "hours"; } else { $word_h = "hour"; }
+			if ($mins > 1) { $word_m = "mins"; } else { $word_m = "min"; }
+			if ($hours > 0) { $mins = $mins - ($hours * 60); }
+
+			if ($hours <= 0) {
+				$scentence = "{$mins} {$word_m} ago.";
+			}
+			else if ($mins <= 0) {
+				$scentence = "{$hours} {$word_h} ago.";
+			}
+			else {
+				$scentence = "{$hours} {$word_h} {$mins} {$word_m} ago.";
+			}
+			return $scentence;
+		}
+		else if ($differ <= 30) {
+			// 30 Seconds ago.
+			return $differ." seconds ago.";
+		}
+		else {
+			return substr(date('F',$stamp),0,3).chr(32).date('j, Y',$stamp);
 		}
 	}
 }
