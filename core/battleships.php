@@ -27,6 +27,8 @@ class battleships {
 			
 			$this->data = $default;
 			$this->update();
+			
+			$this->computer_gen();
 		}
 	}
 	public function update() {
