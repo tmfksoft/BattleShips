@@ -10,6 +10,7 @@ include('core/battleships.php');
 $game = new battleships();
 $hscores = new highscores();
 $tmpl = new template();
+$bgd = new battle_gd();
 
 // We begin with the game.
 if ($game->action() == "clean") {
@@ -22,6 +23,7 @@ if ($game->action() == "clean") {
 
 // Now we dance around the rose bush with the templating system.
 $tmpl->set("page","home");
+$tmpl->set("grid",$bgd->image_grid());
 $tmpl->load("home.php");
 $tmpl->display(false,true);
 ?>

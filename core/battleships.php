@@ -72,4 +72,5 @@ class battleships {
 // Include some PHP Files.
 include('core/hscore.inc.php');
 include('core/tmpl.inc.php');
+include('core/gd.inc.php');
 ?>

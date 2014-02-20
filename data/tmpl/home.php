@@ -7,4 +7,5 @@
 	<table>
 	
 	</table>
+	<img src="data:image/png;base64,<?php echo base64_encode($this->get("grid")); ?>"/>
 </center>
