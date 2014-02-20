@@ -17,24 +17,31 @@ $bgd = new battle_gd();
 // We begin with the game.
 if ($game->action() == "clean") {
 	// We start the game again.
-	$game->create_grid("player_ships",10,10,0);
-	$game->create_grid("player_hits",10,10,0);
 	
-	$game->create_grid("computer_ships",10,10,0);
-	$game->create_grid("computer_hits",10,10,0);
+	// Generate the computers grid.
+	$game->computer_gen();
+	
+	$game->set("action","ready"); // Ready for the player to place ships
+	
 }
 
 // Now we dance around the rose bush with the templating system.
 $tmpl->set("page","home");
-$tmpl->set("player_ships",$bgd->image_grid(true));
-$tmpl->set("computer_hits",$bgd->image_grid());
+// Grid Data
+$player_ships = $game->get("player_ships");
+$player_hits = $game->get("player_hits");
+$tmpl->set("player_ships",$bgd->image_grid($player_ships,$player_hits,true));
+
+$computer_ships = $game->get("computer_ships");
+$computer_hits = $game->get("computer_hits");
+$tmpl->set("computer_hits",$bgd->image_grid($computer_ships,$computer_hits));
 
 // Pass some info to the page. This is when they first navigate there. AJAX JQuery takes care of updating values.
-$tmpl->set("p_score",$game->get_var('p_score'));
-$tmpl->set("c_score",$game->get_var('c_score'));
+$tmpl->set("p_score",$game->get('p_score'));
+$tmpl->set("c_score",$game->get('c_score'));
 
-$tmpl->set("p_name",$game->get_var('p_name'));
-$tmpl->set("c_name",$game->get_var('c_name'));
+$tmpl->set("p_name",$game->get('p_name'));
+$tmpl->set("c_name",$game->get('c_name'));
 
 $tmpl->load("home.php");
 $tmpl->display(false,true);

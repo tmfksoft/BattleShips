@@ -16,7 +16,16 @@ $bgd = new battle_gd();
 
 // Return an array.
 $grids = array();
-$grids['player_ships'] = "data:image/png;base64,".base64_encode($bgd->image_grid(true));
-$grids['computer_hits'] = "data:image/png;base64,".base64_encode($bgd->image_grid(true));
+
+
+// Grid Data
+$player_ships = $game->get("player_ships");
+$player_hits = $game->get("player_hits");
+$grids['player_ships'] = "data:image/png;base64,".base64_encode($bgd->image_grid($player_ships,$player_hits,true));
+
+$computer_ships = $game->get("computer_ships");
+$computer_hits = $game->get("computer_hits");
+$grids['computer_hits'] = "data:image/png;base64,".base64_encode($bgd->image_grid($computer_ships,$computer_hits));
+
 echo json_encode($grids);
 ?>

@@ -10,4 +10,12 @@
 }
 #playing_grids {
 	text-align:center;
+	width:100%;
+}
+.ship {
+	height:32px;
+	display:block;
+}
+#ship_queue {
+	text-align:center;
 }

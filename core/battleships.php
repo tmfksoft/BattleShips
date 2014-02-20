@@ -6,45 +6,32 @@
 session_start();
 
 class battleships {
-	public function __construct() {
+	public function __construct($force_clean = false) {
 		// Create some Variables
 		$this->grids = array();
-		if (isset($_SESSION) && count($_SESSION) > 0) {
+		if (isset($_SESSION) && count($_SESSION) > 0 && !$force_clean) {
 			$this->data = $_SESSION;
 		} else {
-			$this->data = array("var_action"=>"clean","var_p_score"=>0,"var_c_score"=>0,"var_p_name"=>"Player","var_c_name"=>"Computer");
+			$default = array();
+			// Basic Data
+			$default['var_action'] = "clean";
+			$default['var_p_score'] = 0;
+			$default['var_c_score'] = 0;
+			$default['var_p_name'] = "Player";
+			$default['var_c_name'] = "Computer";
+			// Ship and Grid
+			$default['var_player_ships'] = array();
+			$default['var_player_hits'] = array();
+			$default['var_computer_ships'] = array();
+			$default['var_computer_hits'] = array();
+			
+			$this->data = $default;
+			$this->update();
 		}
 	}
 	public function update() {
 		// Updates the data variable to the Session variable
 		$_SESSION = $this->data;
-	}
-	public function create_grid($name,$width = 10,$height = 10,$default = false) {
-		$dat = array();
-		for ($y = 1; $y != $height; $y++) {
-			$row = array();
-			for ($x = 1; $x != $width; $x++) {
-				$row[$x] = $default;
-			}
-			$dat[$y] = $row;
-		}
-		$this->data["grid_".strtolower($name)] = $dat;
-		// Update the Session
-		$this->update();
-	}
-	public function grid_exists($name) {
-		if (isset($this->data["grid_".strtolower($name)])) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	public function get_grid($name) {
-		if ($this->grid_exists($name)) {
-			return $this->data["grid_".strtolower($name)];
-		} else {
-			return null;
-		}
 	}
 	public function action($name = false) {
 		if ($name) {
@@ -57,10 +44,11 @@ class battleships {
 	}
 	
 	// Easy access to variables
-	public function set_var($name,$val) {
+	public function set($name,$val) {
 		$this->data["var_".strtolower($name)] = $val;
+		$this->update();
 	}
-	public function get_var($name = false) {
+	public function get($name = false) {
 		if ($name) {
 			if (isset($this->data["var_".strtolower($name)])) {
 				return $this->data["var_".strtolower($name)];
@@ -76,6 +64,48 @@ class battleships {
 				}
 			}
 			return $ret;
+		}
+	}
+	
+	// Computer Related
+	function computer_gen() {
+		// Generates the Ship grid from the computer.
+		$ships = array();
+		$ships[] = array("name"=>"Aircraft Carrier","len"=>5);
+		$ships[] = array("name"=>"Battleship","len"=>4);
+		$ships[] = array("name"=>"Submarine","len"=>3);
+		$ships[] = array("name"=>"Destroyer","len"=>3);
+		$ships[] = array("name"=>"Patrol Boat","len"=>2);
+		
+		foreach ($ships as $id => $sh) {
+			// We cycle each ship and place it randomly.
+			$ships[$id]['x'] = rand(0,9);
+			$ships[$id]['y'] = rand(0,9);
+			$ships[$id]['dir'] = rand(0,1);
+		}
+		$this->set("computer_ships",$ships);
+
+	}
+	function computer_do_hit() {
+		// AI To place a hit against the player.
+	}
+	// Player Related.
+	function player_place_ship($x,$y) {
+		$ships = array();
+		$ships[] = array("name"=>"Aircraft Carrier","len"=>5);
+		$ships[] = array("name"=>"Battleship","len"=>4);
+		$ships[] = array("name"=>"Submarine","len"=>3);
+		$ships[] = array("name"=>"Destroyer","len"=>3);
+		$ships[] = array("name"=>"Patrol Boat","len"=>2);
+		
+		$player_ships = $this->get("player_ships");
+		if (count($player_ships) < count($ships)) {
+			$tmp = $ships[count($player_ships)];
+			$tmp['x'] = $x;
+			$tmp['y'] = $y;
+			$tmp['dir'] = 1;
+			$player_ships[] = $tmp;
+			$this->set("player_ships",$player_ships);
 		}
 	}
 }
