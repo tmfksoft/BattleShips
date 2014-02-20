@@ -70,12 +70,7 @@ class battleships {
 	// Computer Related
 	function computer_gen() {
 		// Generates the Ship grid from the computer.
-		$ships = array();
-		$ships[] = array("name"=>"Aircraft Carrier","len"=>5);
-		$ships[] = array("name"=>"Battleship","len"=>4);
-		$ships[] = array("name"=>"Submarine","len"=>3);
-		$ships[] = array("name"=>"Destroyer","len"=>3);
-		$ships[] = array("name"=>"Patrol Boat","len"=>2);
+		$ships = config::get("ships");
 		
 		foreach ($ships as $id => $sh) {
 			// We cycle each ship and place it randomly.
@@ -91,12 +86,7 @@ class battleships {
 	}
 	// Player Related.
 	function player_place_ship($x,$y) {
-		$ships = array();
-		$ships[] = array("name"=>"Aircraft Carrier","len"=>5);
-		$ships[] = array("name"=>"Battleship","len"=>4);
-		$ships[] = array("name"=>"Submarine","len"=>3);
-		$ships[] = array("name"=>"Destroyer","len"=>3);
-		$ships[] = array("name"=>"Patrol Boat","len"=>2);
+		$ships = config::get("ships");
 		
 		$player_ships = $this->get("player_ships");
 		if (count($player_ships) < count($ships)) {
@@ -107,6 +97,11 @@ class battleships {
 			$player_ships[] = $tmp;
 			$this->set("player_ships",$player_ships);
 		}
+	}
+	function player_queue() {
+		$ships = config::get("ships");
+		
+		return array_slice($ships,count($this->get("player_ships")));
 	}
 }
 

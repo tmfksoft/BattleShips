@@ -12,19 +12,7 @@ class battle_gd {
 		$cols = config::get("cols");
 		$font = 5;
 		$debug = false; // Do we spit out debug. [WARNING] VERY MESSY
-		/*
-		$ships = array();
-		$ships[] = array("dir"=>1,"len"=>3,"x"=>8,"y"=>4);
-		$ships[] = array("dir"=>0,"len"=>5,"x"=>4,"y"=>2);
-		$ships[] = array("dir"=>1,"len"=>3,"x"=>0,"y"=>7);
-		$ships[] = array("dir"=>0,"len"=>2,"x"=>2,"y"=>5);
 		
-		$hits = array();
-		$hc = rand(5,100);
-		for ($ly = 0; $ly != $hc; $ly++) {
-			$hits[] = array("x"=>rand(0,$cols-1),"y"=>rand(0,$rows-1));
-		}
-		*/
 		// Cell Sizes.
 		$width = 32;
 		$height = 32;

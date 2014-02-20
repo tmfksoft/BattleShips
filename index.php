@@ -43,6 +43,9 @@ $tmpl->set("c_score",$game->get('c_score'));
 $tmpl->set("p_name",$game->get('p_name'));
 $tmpl->set("c_name",$game->get('c_name'));
 
+// Player Queue
+$tmpl->set("player_queue",$game->player_queue());
+
 $tmpl->load("home.php");
 $tmpl->display(false,true);
 ?>

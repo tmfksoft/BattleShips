@@ -2,7 +2,7 @@
 	<h3>
 		Play Battleships
 		<span class="pull-right">
-			<input type="button" value="Restart" class="btn"/>
+			<input type="button" onclick="restart_game();" value="Restart" class="btn"/>
 		</span>
 	</h3>
 </div>
@@ -55,8 +55,8 @@
 		</tr>
 		<tr>
 			<td>
-				<div id="ship_queue">
-					<?php foreach (config::get("ships") as $ship) {
+				<div id="player_queue">
+					<?php foreach ($this->get("player_queue") as $ship) {
 						echo '<img class="ship" title="'.$ship['name'].'" src="assets/img/ship_'.$ship['len'].'.png"/>';
 					} ?>
 				</div>
