@@ -24,7 +24,16 @@ if ($game->action() == "clean") {
 
 // Now we dance around the rose bush with the templating system.
 $tmpl->set("page","home");
-$tmpl->set("grid",$bgd->image_grid());
+$tmpl->set("player_ships",$bgd->image_grid(true));
+$tmpl->set("computer_hits",$bgd->image_grid());
+
+// Pass some info to the page. This is when they first navigate there. AJAX JQuery takes care of updating values.
+$tmpl->set("p_score",$game->get_var('p_score'));
+$tmpl->set("c_score",$game->get_var('c_score'));
+
+$tmpl->set("p_name",$game->get_var('p_name'));
+$tmpl->set("c_name",$game->get_var('c_name'));
+
 $tmpl->load("home.php");
 $tmpl->display(false,true);
 ?>

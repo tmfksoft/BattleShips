@@ -4,7 +4,7 @@
 // Image File - 60% of This file is Debug. :|
 // Generates the Grid image to display to the user.
 class battle_gd {
-	public function image_grid($grid = array(),$hits = array(),$draw_ships = false) {
+	public function image_grid($draw_ships = false) {
 		// Returns Image Data in PNG Format.
 		
 		// Grid Data
@@ -26,8 +26,8 @@ class battle_gd {
 		}
 		
 		// Cell Sizes.
-		$width = 64;
-		$height = 64;
+		$width = 32;
+		$height = 32;
 		
 		// Grid Size, Takes into account the Grid lines and such
 		$g_w = $width * $cols + $width + ($cols*2);
@@ -91,9 +91,9 @@ class battle_gd {
 				
 				// DST, SRC, DSTX, DSTY, SRCX, SRCY, DSTW, DSTH, SRCW, SRCH
 				if ($sh['dir']) {
-					imagecopyresampled($grid, $nres, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $h, $w, $h, $w);
+					imagecopyresampled($grid, $nres, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $height, $width * $sh['len'], $h, $w);
 				} else {
-					imagecopyresampled($grid, $res, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $w, $h, $w, $h);
+					imagecopyresampled($grid, $res, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $width * $sh['len'], $height, $w, $h);
 				}
 				
 				if ($debug) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height, $sid, $red);
@@ -171,7 +171,7 @@ class battle_gd {
 			
 			// Copy it to the right place
 			// DST, SRC, DSTX, DSTY, SRCX, SRCY, DSTW, DSTH, SRCW, SRCH
-			imagecopyresampled($grid, $res , $ht['x'] * $width + $width, $ht['y'] * $height + $height, 0, 0, $w, $h, $w, $h);
+			imagecopyresampled($grid, $res , $ht['x'] * $width + $width, $ht['y'] * $height + $height, 0, 0, $width, $height, $w, $h);
 			imagedestroy($res);
 			
 			// Debug data

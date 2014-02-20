@@ -12,7 +12,7 @@ class battleships {
 		if (isset($_SESSION) && count($_SESSION) > 0) {
 			$this->data = $_SESSION;
 		} else {
-			$this->data = array("action"=>"clean");
+			$this->data = array("var_action"=>"clean","var_p_score"=>0,"var_c_score"=>0,"var_p_name"=>"Player","var_c_name"=>"Computer");
 		}
 	}
 	public function update() {
@@ -52,7 +52,7 @@ class battleships {
 			$this->update();
 			return true;
 		} else {
-			return $this->data['action'];
+			return $this->data['var_action'];
 		}
 	}
 	
@@ -60,11 +60,22 @@ class battleships {
 	public function set_var($name,$val) {
 		$this->data["var_".strtolower($name)] = $val;
 	}
-	public function get_var($name) {
-		if (isset($this->data["var_".strtolower($name)])) {
-			return $this->data["var_".strtolower($name)];
+	public function get_var($name = false) {
+		if ($name) {
+			if (isset($this->data["var_".strtolower($name)])) {
+				return $this->data["var_".strtolower($name)];
+			} else {
+				return null;
+			}
 		} else {
-			return null;
+			$ret = array();
+			foreach ($this->data as $vname => $val) {
+				if ($vname[0] === "v") {
+					// Check if its a variable
+					$ret[$vname] = $val;
+				}
+			}
+			return $ret;
 		}
 	}
 }
