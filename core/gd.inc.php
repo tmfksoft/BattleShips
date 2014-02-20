@@ -1,17 +1,17 @@
 <?php
 // BattleShips Game
 // Created by Thomas Edwards [2014]
-// Image File
+// Image File - 60% of This file is Debug. :|
 // Generates the Grid image to display to the user.
 class battle_gd {
-	public function image_grid($grid = array(),$hits = array()) {
+	public function image_grid($grid = array(),$hits = array(),$draw_ships = false) {
 		// Returns Image Data in PNG Format.
 		
 		// Grid Data
 		$rows = 10;
 		$cols = 10;
 		$font = 5;
-		$debug = true;
+		$debug = false; // Do we spit out debug. [WARNING] VERY MESSY
 		
 		$ships = array();
 		$ships[] = array("dir"=>1,"len"=>3,"x"=>8,"y"=>4);
@@ -20,10 +20,9 @@ class battle_gd {
 		$ships[] = array("dir"=>0,"len"=>2,"x"=>2,"y"=>5);
 		
 		$hits = array();
-		for ($ly = 0; $ly != $rows; $ly++) {
-			for ($lx = 0; $lx != $cols; $lx++) {
-				$hits[] = array("x"=>$lx,"y"=>$ly);
-			}
+		$hc = rand(5,100);
+		for ($ly = 0; $ly != $hc; $ly++) {
+			$hits[] = array("x"=>rand(0,$cols-1),"y"=>rand(0,$rows-1));
 		}
 		
 		// Cell Sizes.
@@ -40,7 +39,11 @@ class battle_gd {
 		$bg_colour = imagecolorallocatealpha($grid, 0, 0, 0, 127); 
 		imagefill($grid, 0, 0, $bg_colour); 
 		imagesavealpha($grid, true);
-	
+		
+		// Draw our background
+		$water = imagecolorallocate($grid, 155, 199, 228);
+		imagefilledrectangle($grid, $width, $height, $width * $cols + $width, $height * $rows + $height, $water);
+		
 		// Draw Grid Lines.
 		
 		// Make some colours
@@ -68,68 +71,80 @@ class battle_gd {
 		}
 		
 		// Now we draw the Ships on the Grid.
-		foreach ($ships as $sid => $sh) {
-			$res = imagecreatefrompng("assets/img/ship_{$sh['len']}.png"); // Load the Ship Image
-			// Ensure it realises we want maintain alpha transparency.
-			imagealphablending($res, true);
-			imagesavealpha($res, true);
-			
-			$w = imagesx($res);
-			$h = imagesy($res);
-			
-			// Copy it to the right place on the grid.
-			
-			// Does it need to be rotated?
-			if ($sh['dir'] == 1) {
-				$nres = imagerotate($res, -90, $bg_colour);
-				$res = $nres;
+		if ($draw_ships) {
+			foreach ($ships as $sid => $sh) {
+				$res = imagecreatefrompng("assets/img/ship_{$sh['len']}.png"); // Load the Ship Image
+				// Ensure it realises we want maintain alpha transparency.
+				imagealphablending($res, true);
+				imagesavealpha($res, true);
+				
+				$w = imagesx($res);
+				$h = imagesy($res);
+				
+				// Copy it to the right place on the grid.
+				
+				// Does it need to be rotated?
+				if ($sh['dir'] == 1) {
+					$nres = imagerotate($res, -90, $bg_colour);
+					$res = $nres;
+				}
+				
+				// DST, SRC, DSTX, DSTY, SRCX, SRCY, DSTW, DSTH, SRCW, SRCH
+				if ($sh['dir']) {
+					imagecopyresampled($grid, $nres, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $h, $w, $h, $w);
+				} else {
+					imagecopyresampled($grid, $res, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $w, $h, $w, $h);
+				}
+				
+				if ($debug) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height, $sid, $red);
+				if ($debug && $sh['dir']) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height + 30, "V", $red);
+				if ($debug && !$sh['dir']) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height + 30, "H", $red);
+				
+				imagedestroy($res); // Destroy what we dont need.
 			}
-			
-			// DST, SRC, DSTX, DSTY, SRCX, SRCY, DSTW, DSTH, SRCW, SRCH
-			if ($sh['dir']) {
-				imagecopyresampled($grid, $nres, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $h, $w, $h, $w);
-			} else {
-				imagecopyresampled($grid, $res, $sh['x'] * $width + $width, $sh['y'] * $height + $height, 0, 0, $w, $h, $w, $h);
-			}
-			
-			if ($debug) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height, $sid, $red);
-			if ($debug && $sh['dir']) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height + 30, "V", $red);
-			if ($debug && !$sh['dir']) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height + 30, "H", $red);
-			
-			imagedestroy($res); // Destroy what we dont need.
 		}
 		
 		// Finally. Time to draw the Hits on the grid.
-		foreach ($hits as $ht) {
-			$type = "miss";
+		$shot = 0;
+		foreach ($hits as $hid => $ht) {
+			$type = 0;
 			// Determine if this is a hit image or not.
 			foreach ($ships as $sid => $sh) {
 				// Check for a direct hit.
 				if ($ht['x'] === $sh['x'] && $ht['y'] === $sh['y']) {
 					if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width, $ht['y'] * $height + $height, "A", $red);
-					$type = "hit";
+					$type++;
 				} else {
-
 					if ($sh['dir'] == 1) {
 						// Its vertical.
-						if ($ht['x'] === $sh['x'] && $ht['y'] >= 6) {
-							if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 10, $ht['y'] * $height + $height, "B", $red);
-							$type = "hit";
+						if ($ht['x'] === $sh['x']) {
+							if ($ht['y'] <= $sh['y']+$sh['len']-1) {
+								if ($ht['y'] >= $sh['y']) {
+									$type++;
+									if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 10, $ht['y'] * $height + $height, "B", $red);
+								}
+							}
 						}
 					} else {
 						// Its horizontal
-						/*
-						if ($ht['y'] == $sh['y'] && ($ht['x'] >= $sh['x'] && $ht['x'] < $sh['len'])) {
-							$type = "hit";
-							if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 20, $ht['y'] * $height + $height, "C", $red);
+						
+						if ($ht['y'] == $sh['y']) {
+							if ($ht['x'] <= $sh['x']+$sh['len']-1) {
+								if ($ht['x'] >= $sh['x']) {
+									$type++;
+									if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 20, $ht['y'] * $height + $height, "C", $red);
+								}
+							}
 						}
-						*/
+						
 					}
 				}
 				// Spew the Ship ID we're checking
-				if ($type == "miss") {
+				if (!$type) {
+					// Miss!
 					if ($debug) imagestring($grid, 5, $ht['x'] * $width + $width + 13 * $sid, $ht['y'] * $height + $height + 49, $sid, $red);
 				} else {
+					// Hit!
 					if ($debug) imagestring($grid, 5, $ht['x'] * $width + $width + 13 * $sid, $ht['y'] * $height + $height + 52, $sid, $red);
 				}
 				if ($debug && $sh['dir']) imagestring($grid, 5, $sh['x'] * $width + $width + ($width-10), $sh['y'] * $height + $height + 40, "V", $red);
@@ -140,10 +155,12 @@ class battle_gd {
 				if ($debug) imagestring($grid, 3, $ht['x'] * $width + $width + 30 + ($sid * 10), $ht['y'] * $height + $height + 26, $sh['y'], $red);
 			}
 			
-			$res = imagecreatefrompng("assets/img/{$type}.png"); // Load the Hit Image
-			if ($type == "hit") {
+			if ($type) {
+				$shot++;
+				$res = imagecreatefrompng("assets/img/hit.png"); // Load the Hit Image
 				if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 30, $ht['y'] * $height + $height, "D", $red);
 			} else {
+				$res = imagecreatefrompng("assets/img/miss.png"); // Load the Miss Image
 				if ($debug) imagechar($grid, 5, $ht['x'] * $width + $width + 40, $ht['y'] * $height + $height, "E", $red);
 			}
 			
@@ -154,16 +171,17 @@ class battle_gd {
 			
 			// Copy it to the right place
 			// DST, SRC, DSTX, DSTY, SRCX, SRCY, DSTW, DSTH, SRCW, SRCH
-			if (!$debug) imagecopyresampled($grid, $res , $ht['x'] * $width + $width, $ht['y'] * $height + $height, 0, 0, $w, $h, $w, $h);
+			imagecopyresampled($grid, $res , $ht['x'] * $width + $width, $ht['y'] * $height + $height, 0, 0, $w, $h, $w, $h);
 			imagedestroy($res);
 			
 			// Debug data
 			if ($debug) imagestring($grid, 5, $ht['x'] * $width + $width, $ht['y'] * $height + $height + 13, "X:".$ht['x'], $red);
 			if ($debug) imagestring($grid, 5, $ht['x'] * $width + $width, $ht['y'] * $height + $height + 26, "Y:".$ht['y'], $red);
-			if ($debug && $type == "hit") imagestring($grid, 4, $ht['x'] * $width + $width, $ht['y'] * $height + $height + 36, "HIT!", $red);
-			if ($debug && $type == "miss") imagestring($grid, 4, $ht['x'] * $width + $width, $ht['y'] * $height + $height + 36, "MISS!", $red);
+			if ($debug && $type) imagestring($grid, 4, $ht['x'] * $width + $width, $ht['y'] * $height + $height + 36, "HIT!", $red);
+			if ($debug && !$type) imagestring($grid, 4, $ht['x'] * $width + $width, $ht['y'] * $height + $height + 36, "MISS!", $red);
 		}
-	
+		if ($debug) imagestring($grid, 5, 5, 5, $shot, $red);
+		
 		ob_start();
 			imagepng($grid);
 			$image = ob_get_contents();

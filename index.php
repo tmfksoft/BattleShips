@@ -15,10 +15,11 @@ $bgd = new battle_gd();
 // We begin with the game.
 if ($game->action() == "clean") {
 	// We start the game again.
-	$game->create_grid("player",10,10,0);
-	$game->create_grid("computer",10,10,0);
-	$game->create_grid("computer_guess",10,10,0);
-	$game->create_grid("player_guess",10,10,0);
+	$game->create_grid("player_ships",10,10,0);
+	$game->create_grid("player_hits",10,10,0);
+	
+	$game->create_grid("computer_ships",10,10,0);
+	$game->create_grid("computer_hits",10,10,0);
 }
 
 // Now we dance around the rose bush with the templating system.
