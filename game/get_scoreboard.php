@@ -13,8 +13,11 @@ $game = new battleships();
 $hscores = new highscores();
 $tmpl = new template();
 $bgd = new battle_gd();
+
+$cscore = $game->score($game->get("player_ships"),$game->get("player_hits"));
+$pscore = $game->score($game->get("computer_ships"),$game->get("computer_hits"));
 ?>
-<table class="table" id="score_board">
+<table class="table">
 	<thead>
 		<tr>
 			<td></td>
@@ -26,17 +29,17 @@ $bgd = new battle_gd();
 		</tr>
 	</thead>
 	<tr>
-		<td><?php echo $game->get_var("p_name"); ?></td>
-		<td><?php echo $game->get_var("p_score"); ?></td>
-		<td><?php echo "Yes"; ?>
-		<td>0</td>
+		<td><?php echo $game->get("p_name"); ?></td>
+		<td><?php echo $pscore; ?>pts</td>
+		<td><?php if ($pscore > $cscore) { echo "Yes"; } else if ($pscore === $cscore) { echo "Drawing"; } else { echo "No"; }; ?></td>
+		<td>.</td>
 		<td>0</td>
 		<td>0</td>
 	</tr>
 	<tr>
-		<td><?php echo $game->get_var("c_name"); ?></td>
-		<td><?php echo $game->get_var("c_score"); ?></td>
-		<td><?php echo "No"; ?>
+		<td><?php echo $game->get("c_name"); ?></td>
+		<td><?php echo $cscore; ?>pts</td>
+		<td><?php if ($pscore < $cscore) { echo "Yes"; } else if ($pscore === $cscore) { echo "Drawing"; } else { echo "No"; }; ?></td>
 		<td>0</td>
 		<td>0</td>
 		<td>0</td>

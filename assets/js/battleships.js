@@ -6,9 +6,8 @@ function update_grids() {
 	});
 }
 function update_scoreboard() {
-	$.getJSON('game/get_scoreboard.php',function(data) {
-		$('#player_ships').attr('src',data.player_ships);
-		$('#computer_hits').attr('src',data.computer_hits);
+	$.get('game/get_scoreboard.php',function(data) {
+		$('#score_board').html(data);
 	});
 }
 function update_queue() {
@@ -16,12 +15,15 @@ function update_queue() {
 		$('#player_queue').html(data);
 	});
 }
+function update_all() {
+	update_grids();
+	update_scoreboard();
+	update_queue();
+}
 function restart_game() {
 	if (confirm("Restart game?\n\nAll scores and grids will be reset.")) {
 		$.get('game/restart_game.php',function(data) {
-			update_grids();
-			update_queue();
-			update_scoreboard();
+			update_all();
 		});
 	}
 }
@@ -40,8 +42,7 @@ $("#player_ships").click(function(e){
    var relY = Math.floor(relY / 32)-1;
    console.log("Trying to Placing Ship at "+relX+"x"+relY);
    $.get("game/place_ship.php?x="+relX+"&y="+relY+"&direction="+~~direction,function(data){
-		update_grids();
-		update_queue();
+		update_all();
    });
 });
 
@@ -55,6 +56,6 @@ $("#computer_hits").click(function(e){
    var relY = Math.floor(relY / 32)-1;
    console.log("Trying to Placing Hit at "+relX+"x"+relY);
    $.get("game/place_hit.php?x="+relX+"&y="+relY,function(data){
-		update_grids();
+		update_all();
    });
 });

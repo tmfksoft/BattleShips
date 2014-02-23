@@ -25,7 +25,7 @@ $grids['player_ships'] = "data:image/png;base64,".base64_encode($bgd->image_grid
 
 $computer_ships = $game->get("computer_ships");
 $computer_hits = $game->get("computer_hits");
-$grids['computer_hits'] = "data:image/png;base64,".base64_encode($bgd->image_grid($computer_ships,$computer_hits));
+$grids['computer_hits'] = "data:image/png;base64,".base64_encode($bgd->image_grid($computer_ships,$computer_hits,true));
 
 echo json_encode($grids);
 ?>

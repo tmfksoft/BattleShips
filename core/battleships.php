@@ -73,18 +73,42 @@ class battleships {
 	function computer_gen() {
 		// Generates the Ship grid from the computer.
 		$ships = config::get("ships");
-		
+		$com_ships = array();
 		foreach ($ships as $id => $sh) {
-			// We cycle each ship and place it randomly.
-			$ships[$id]['x'] = rand(0,9);
-			$ships[$id]['y'] = rand(0,9);
-			$ships[$id]['dir'] = rand(0,1);
+			// We cycle each ship and place it randomly (As in we dont care about any other variables yet.).
+			$t = array();
+			$direction = rand(0,1);
+			// Simple system to avoid a ship being dramatically off the grid
+			if ($direction) {
+				$t['y'] = rand(0,config::get("rows") - $sh['len']);
+				$t['x'] = rand(0,9);
+			} else {
+				$t['x'] = rand(0,config::get("cols") - $sh['len']);
+				$t['y'] = rand(0,9);
+			}
+			$t['len'] = $sh['len'];
+			$t['name'] = $sh['name'];
+			$t['dir'] = $direction;
+			$com_ships[] = $t;
 		}
-		$this->set("computer_ships",$ships);
+		$this->set("computer_ships",$com_ships);
 
 	}
-	function computer_do_hit() {
+	function computer_do_hit($x = -1, $y = -1) {
 		// AI To place a hit against the player.
+		$x = rand(0,config::get("cols")-1);
+		$y = rand(0,config::get("rows")-1);
+		$hits = $this->get("player_hits");
+		if (count($hits) < config::get("cols") * config::get("rows")) {
+			// Make sure we have room to hit.
+			if ($this->can_hit($hits,$x,$y)) {
+				$hits[] = array("x"=>$x,"y"=>$y);
+				$this->set("player_hits",$hits);
+			} else {
+				// Restart to find a different X,Y
+				$this->computer_do_hit($x,$y);
+			}
+		}
 	}
 	// Player Related.
 	function player_place_ship($x,$y,$dir = 0) {
@@ -139,14 +163,77 @@ class battleships {
 		if (count($this->get("player_ships")) === count(config::get("ships"))) {
 			// Check we've actually placed our ships.
 			$hits = $this->get("computer_hits");
-			$hits[] = array("x"=>$x,"y"=>$y);
-			$this->set("computer_hits",$hits);
+			if ($this->can_hit($hits,$x,$y)) {
+				// We CAN hit here.
+				$hits[] = array("x"=>$x,"y"=>$y);
+				$this->set("computer_hits",$hits);
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 	function player_queue() {
 		$ships = config::get("ships");
 		
 		return array_slice($ships,count($this->get("player_ships")));
+	}
+	/* General Functions, These arent specific */
+	public function score($ships=array(),$hits=array()) {
+		// Pretty much same as the GD code except without the drawing.
+		$shot = 0;
+		if (count($hits) > 0) {
+			foreach ($hits as $hid => $ht) {
+				$type = 0;
+				// Determine if this is a hit image or not.
+				foreach ($ships as $sid => $sh) {
+					// Check for a direct hit.
+					if ($ht['x'] === $sh['x'] && $ht['y'] === $sh['y']) {
+						// Hit!
+						$type++;
+					} else {
+						if ($sh['dir'] == 1) {
+							// Its vertical.
+							if ($ht['x'] === $sh['x']) {
+								if ($ht['y'] <= $sh['y']+$sh['len']-1) {
+									if ($ht['y'] >= $sh['y']) {
+										// Hit!
+										$type++;
+									}
+								}
+							}
+						} else {
+							// Its horizontal
+							
+							if ($ht['y'] == $sh['y']) {
+								if ($ht['x'] <= $sh['x']+$sh['len']-1) {
+									if ($ht['x'] >= $sh['x']) {
+										// Hit!
+										$type++;
+									}
+								}
+							}
+							
+						}
+					}
+				}
+				$shot = $shot + $type;
+			}
+		}
+		return ($shot*5 + count($hits) * 5);
+	}
+	public function can_hit($hits = array(),$x, $y) {
+		// Simple code to check if a hit CAN be placed.
+		// Used for the computer and the player to stop dupes.
+		$can = true;
+		foreach ($hits as $mh) {
+			// Cycle the main hits.
+			if ($mh['x'] == $x && $mh['y'] == $y) {
+				// MUTINY!
+				$can = false;
+			}
+		}
+		return $can;
 	}
 }
 

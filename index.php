@@ -19,7 +19,7 @@ if ($game->action() == "clean") {
 	// We start the game again.
 	
 	// Generate the computers grid.
-	$game->computer_gen();
+	//$game->computer_gen();
 	
 	$game->set("action","ready"); // Ready for the player to place ships
 	
